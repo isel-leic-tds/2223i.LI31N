@@ -8,4 +8,6 @@
  */
 
 rootProject.name = "tds-i31n"
+
 include("lesson01-calendar")
+include("lesson02-stack")
