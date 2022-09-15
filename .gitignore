@@ -6,3 +6,6 @@ build
 
 # Ignore InteliJ resources
 .idea
+
+# Ignore InteliJ output directory
+out
