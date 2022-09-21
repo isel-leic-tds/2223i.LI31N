@@ -38,7 +38,5 @@ class NaifDate(
         }
     }
 
-    override fun toString(): String {
-        return "$day-$month-$year"
-    }
+    override fun toString(): String = "$day-$month-$year"
 }

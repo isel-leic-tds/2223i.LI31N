@@ -12,3 +12,5 @@ rootProject.name = "tds-i31n"
 // include("lesson01-calendar")
 // include("lesson03-stack-tests")
 include("lesson04-immutability")
+include("lesson05-calendar")
+include("lesson06-prefix-calculator")
