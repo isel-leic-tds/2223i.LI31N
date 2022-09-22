@@ -15,8 +15,7 @@ data class NaifDate(
             else -> 30
         }
 
-    val nextMonth
-        get() = month % 12 + 1
+    val nextMonth = month % 12 + 1
 
     fun addDays(inc: Int) : NaifDate {
         val diff = inc - (daysInAMonth - day + 1)

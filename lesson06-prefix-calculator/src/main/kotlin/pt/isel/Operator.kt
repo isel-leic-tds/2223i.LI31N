@@ -3,16 +3,16 @@ package pt.isel
 import java.lang.IllegalArgumentException
 
 enum class Operator(private val opr: Char) {
-    Sum('+') {
+    SUM('+') {
         override fun eval(a: Int, b: Int) = a + b
     },
-    Sub('-') {
+    SUB('-') {
         override fun eval(a: Int, b: Int) = a - b
     },
-    Mul('*') {
+    MUL('*') {
         override fun eval(a: Int, b: Int) = a * b
     },
-    Div('/') {
+    DIV('/') {
         override fun eval(a: Int, b: Int) = a/ b
     };
 
