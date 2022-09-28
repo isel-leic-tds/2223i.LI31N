@@ -8,10 +8,7 @@ class IntExprOperator(
     val b : IntExpr
 ) : IntExpr()
 
-fun IntExpr.eval(): Int {
-    return when(this) {
-        is IntExprLiteral -> nr
-        is IntExprOperator -> opr.eval(a.eval(), b.eval())
-
-    }
+fun IntExpr.eval(): Int = when(this) {
+    is IntExprLiteral -> nr
+    is IntExprOperator -> opr.eval(a.eval(), b.eval())
 }
