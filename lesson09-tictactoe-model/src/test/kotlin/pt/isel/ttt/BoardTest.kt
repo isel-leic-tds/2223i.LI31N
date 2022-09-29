@@ -1,11 +1,7 @@
-package pt.isel.pt.isel.ttt
+package pt.isel.ttt
 
-import pt.isel.ttt.Board
-import pt.isel.ttt.BoardRun
-import pt.isel.ttt.BoardWin
 import pt.isel.ttt.Player.CIRCLE
 import pt.isel.ttt.Player.CROSS
-import pt.isel.ttt.Position
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
