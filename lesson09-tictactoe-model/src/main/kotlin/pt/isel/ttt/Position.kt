@@ -8,7 +8,7 @@ class Position private constructor(val lin: Int, val col: Int) {
     val slash get() = lin == BOARD_SIZE - col - 1
 
     companion object {
-        private val values = (0 until MAX_MOVES).map { Position(it / LAST_COORD, it % LAST_COORD) }
+        val values = (0 until MAX_MOVES).map { Position(it / BOARD_SIZE, it % BOARD_SIZE) }
 
         operator fun invoke(l: Int, c: Int): Position {
             require(l in 0..LAST_COORD) { "Invalid line value of $l must be between 0 and $LAST_COORD" }

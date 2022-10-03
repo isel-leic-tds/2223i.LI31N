@@ -3,26 +3,25 @@ package pt.isel.ttt
 const val BOARD_SIZE = 3
 const val MAX_MOVES = BOARD_SIZE * BOARD_SIZE
 
-sealed class Board {
+sealed class Board(val moves: List<Move>) {
     abstract fun play(pos: Position, p: Player) : Board
-}
-
-class BoardDraw : Board() {
-    override fun play(pos: Position, p: Player): Board {
-        throw IllegalStateException("This game has already finished!")
+    fun get(pos: Position): Move? {
+        return moves.find { it.pos == pos }
     }
 }
 
-class BoardWin(val winner: Player) : Board() {
-    override fun play(pos: Position, p: Player): Board {
-        throw IllegalStateException("Player $winner has won the game!")
-    }
+class BoardDraw(moves: List<Move>) : Board(moves) {
+    override fun play(pos: Position, p: Player) = throw IllegalStateException("This game has already finished!")
+}
+
+class BoardWin(moves: List<Move>, val winner: Player) : Board(moves) {
+    override fun play(pos: Position, p: Player) = throw IllegalStateException("Player $winner has won the game!")
 }
 
 class BoardRun(
-    val moves: List<Move> = listOf(),
+    moves: List<Move> = emptyList(),
     val player: Player = Player.CIRCLE
-) : Board() {
+) : Board(moves) {
     /**
      * If it is a valid move then it creates a new
      * Board with all previous moves and the new one.
@@ -32,8 +31,8 @@ class BoardRun(
         require(moves.any { it.pos == pos }.not()) { "Position already occupied!" }
         val m = Move(pos, p)
         return when {
-            checkWinner(m) -> BoardWin(p)
-            moves.size == (MAX_MOVES - 1) -> BoardDraw()
+            checkWinner(m) -> BoardWin(moves, p)
+            moves.size == (MAX_MOVES - 1) -> BoardDraw(moves)
             else -> BoardRun(moves + m, p)
         }
     }
