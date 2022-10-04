@@ -9,7 +9,7 @@ enum class Player(val symbol: Char) {
 }
 
 fun String.toPlayer(): Player {
-    require(this.length > 1) {"Illegal symbol with more than a single char."}
+    require(this.length == 1) {"Illegal symbol with more than a single char."}
     return Player
         .values()
         .find { it.symbol == this.uppercase()[0] }

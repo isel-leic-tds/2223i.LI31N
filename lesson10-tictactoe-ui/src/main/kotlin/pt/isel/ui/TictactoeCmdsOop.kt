@@ -4,12 +4,12 @@ import pt.isel.ttt.*
 
 object CmdQuitOop : CommandOop {
     override fun action(board: Board?, args: List<String>) = null
-    override fun show(board: Board?) {}
+    override fun show(board: Board) {}
     override val syntax: String get() = "quit"
 }
 object CmdStartOop : CommandOop {
     override fun action(board: Board?, args: List<String>) = BoardRun()
-    override fun show(board: Board?) {}
+    override fun show(board: Board) = printBoard(board)
     override val syntax: String get() = "start"
 }
 
@@ -17,6 +17,9 @@ object CmdStartOop : CommandOop {
  * Represents a command with syntax e.g. play X 2 1
  */
 object CmdPlayOop : CommandOop {
+    override fun show(board: Board) = printBoard(board)
+    override val syntax: String get() = "play <X|O> <line> <col>"
+
     override fun action(board: Board?, args: List<String>): Board? {
         require(board != null) {"You should start a game to initialize a Board before start playing"}
         require(args.size == 3) {"Missing arguments! Required player, line and column."}
@@ -26,13 +29,6 @@ object CmdPlayOop : CommandOop {
         val pos = Position(line, col) // May throw Error for illegal line or col
         return board.play(pos, player)
     }
-
-    override fun show(board: Board?) {
-        TODO("Not yet implemented")
-    }
-
-    override val syntax: String
-        get() = "play <X|O> <line> <col>"
 }
 
 val sepLine = "\n"+"---+".repeat(BOARD_SIZE-1)+"---"

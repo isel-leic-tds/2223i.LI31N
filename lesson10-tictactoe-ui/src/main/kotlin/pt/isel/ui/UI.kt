@@ -3,9 +3,9 @@ package pt.isel.ui
 import pt.isel.ttt.Board
 
 /**
- * Cmds example:
- * "QUIT" to CmdQuitOop,
- * "START" to CmdStartOop,
+ * cmds is a Map<String, CommandOop>, e.g.:
+ *   "QUIT" to CmdQuitOop,
+ *   "START" to CmdStartOop,
  */
 fun readCommandsOop(cmds: Map<String, CommandOop>) {
     var board: Board? = null
@@ -21,6 +21,7 @@ fun readCommandsOop(cmds: Map<String, CommandOop>) {
         try {
             board = cmd.action(board, words.drop(1))
             if(board == null) break
+            cmd.show(board)
         } catch (e: Exception) {
             println(e.message)
             println(cmd.syntax)

@@ -31,8 +31,8 @@ class BoardRun(
         require(moves.any { it.pos == pos }.not()) { "Position already occupied!" }
         val m = Move(pos, p)
         return when {
-            checkWinner(m) -> BoardWin(moves, p)
-            moves.size == (MAX_MOVES - 1) -> BoardDraw(moves)
+            checkWinner(m) -> BoardWin(moves + m, p)
+            moves.size == (MAX_MOVES - 1) -> BoardDraw(moves + m)
             else -> BoardRun(moves + m, p)
         }
     }
