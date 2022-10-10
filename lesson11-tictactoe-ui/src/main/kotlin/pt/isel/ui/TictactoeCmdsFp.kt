@@ -2,13 +2,13 @@ package pt.isel.ui
 
 import pt.isel.ttt.*
 
-val cmdQuit = CommandFp(
+val cmdQuit = CommandFp<Board>(
     action = { _, _ -> null },
     show = { },
     syntax = "quit"
 )
 
-val cmdPlay = CommandFp(
+val cmdPlay = CommandFp<Board>(
     action = { board, args ->
         require(board != null) {"You should start a game to initialize a Board before start playing"}
         require(args.size == 3) {"Missing arguments! Required player, line and column."}
@@ -22,7 +22,7 @@ val cmdPlay = CommandFp(
     syntax = "play <X|O> <line> <col>"
 )
 
-val cmdStart = CommandFp(
+val cmdStart = CommandFp<Board>(
     action = { _, _ -> BoardRun() },
     show = cmdPlay.show,
     syntax = "start"

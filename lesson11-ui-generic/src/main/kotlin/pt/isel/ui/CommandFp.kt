@@ -1,9 +1,7 @@
 package pt.isel.ui
 
-import pt.isel.ttt.Board
-
-class CommandFp (
-    val action: (Board?, List<String>) -> Board?,
-    val show: (Board?) -> Unit,
+class CommandFp<T> (
+    val action: (T?, List<String>) -> T?,
+    val show: (T?) -> Unit,
     val syntax : String
 )

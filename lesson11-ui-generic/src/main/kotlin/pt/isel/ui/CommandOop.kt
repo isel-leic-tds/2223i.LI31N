@@ -1,9 +1,7 @@
 package pt.isel.ui
 
-import pt.isel.ttt.Board
-
-interface CommandOop {
-    fun action(board: Board?, args: List<String>) : Board?
-    fun show(board: Board)
+interface CommandOop<T> {
+    fun action(board: T?, args: List<String>) : T?
+    fun show(board: T)
     val syntax : String
 }

@@ -2,12 +2,12 @@ package pt.isel.ui
 
 import pt.isel.ttt.*
 
-object CmdQuitOop : CommandOop {
+object CmdQuitOop : CommandOop<Board> {
     override fun action(board: Board?, args: List<String>) = null
     override fun show(board: Board) {}
     override val syntax: String get() = "quit"
 }
-object CmdStartOop : CommandOop {
+object CmdStartOop : CommandOop<Board> {
     override fun action(board: Board?, args: List<String>) = BoardRun()
     override fun show(board: Board) = printBoard(board)
     override val syntax: String get() = "start"
@@ -16,7 +16,7 @@ object CmdStartOop : CommandOop {
 /**
  * Represents a command with syntax e.g. play X 2 1
  */
-object CmdPlayOop : CommandOop {
+object CmdPlayOop : CommandOop<Board> {
     override fun show(board: Board) = printBoard(board)
     override val syntax: String get() = "play <X|O> <line> <col>"
 
