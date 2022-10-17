@@ -13,6 +13,7 @@ object CmdStartOop : CommandOop<Board> {
     override val syntax: String get() = "start"
 }
 
+
 /**
  * Represents a command with syntax e.g. play X 2 1
  */

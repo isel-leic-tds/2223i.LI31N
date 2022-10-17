@@ -8,6 +8,13 @@ val cmdQuit = CommandFp<Board>(
     syntax = "quit"
 )
 
+
+val cmdStart = CommandFp<Board>(
+    action = { _, _ -> BoardRun() },
+    show = { b -> printBoard(b) },
+    syntax = "start"
+)
+
 val cmdPlay = CommandFp<Board>(
     action = { board, args ->
         require(board != null) {"You should start a game to initialize a Board before start playing"}
@@ -20,10 +27,4 @@ val cmdPlay = CommandFp<Board>(
     },
     show = { b -> b?.let(::printBoard) },
     syntax = "play <X|O> <line> <col>"
-)
-
-val cmdStart = CommandFp<Board>(
-    action = { _, _ -> BoardRun() },
-    show = cmdPlay.show,
-    syntax = "start"
 )
