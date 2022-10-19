@@ -12,6 +12,10 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":lesson09-tictactoe-model"))
+    implementation(project(":lesson12-ui-generic"))
+    implementation(project(":lesson16-storage"))
+
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 

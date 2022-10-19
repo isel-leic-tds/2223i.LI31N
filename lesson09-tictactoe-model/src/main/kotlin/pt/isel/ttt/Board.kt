@@ -18,10 +18,20 @@ class BoardWin(moves: List<Move>, val winner: Player) : Board(moves) {
     override fun play(pos: Position, p: Player) = throw IllegalStateException("Player $winner has won the game!")
 }
 
+fun String.deserializeToBoardRun() : BoardRun {
+    val moves = this.split("\n").map { it.deserializeToMove() }
+    return BoardRun(moves)
+}
+
 class BoardRun(
     moves: List<Move> = emptyList(),
     val player: Player = Player.CIRCLE
 ) : Board(moves) {
+    /**
+     * Returns a String representation with one line per Move object.
+     */
+    fun serialize() = moves.map { it.serialize() }.joinToString("\n")
+
     /**
      * If it is a valid move then it creates a new
      * Board with all previous moves and the new one.

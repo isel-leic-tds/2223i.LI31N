@@ -2,7 +2,7 @@ package pt.isel.ttt
 
 const val LAST_COORD = BOARD_SIZE - 1
 
-class Position private constructor(val lin: Int, val col: Int) {
+data class Position private constructor(val lin: Int, val col: Int) {
 
     val backslash get() = lin == col
     val slash get() = lin == BOARD_SIZE - col - 1

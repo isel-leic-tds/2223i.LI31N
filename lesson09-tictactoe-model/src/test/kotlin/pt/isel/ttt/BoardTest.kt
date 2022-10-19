@@ -8,6 +8,12 @@ import kotlin.test.assertFailsWith
 
 class BoardTest {
 
+    @Test fun `Serialize and deserialize returns equivalent BoardRun object`() {
+        val b = BoardRun().play(Position(1, 2), CROSS) as BoardRun
+        val newBoardRun = b.serialize().deserializeToBoardRun()
+        assertEquals(b.moves, newBoardRun.moves)
+    }
+
     @Test fun `The same player cannot play twice`() {
         val ex = assertFailsWith<IllegalArgumentException> {
             BoardRun(player = CIRCLE).play(Position(0,0), CIRCLE)
