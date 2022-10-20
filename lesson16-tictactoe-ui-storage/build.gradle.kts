@@ -32,5 +32,15 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass.set("pt.isel.AppKt")
+    mainClass.set("pt.isel.ui.AppKt")
+}
+
+tasks.jar {
+    manifest.attributes["Main-Class"] = "pt.isel.ui.AppKt"
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree) // OR .map { zipTree(it) }
+    from(dependencies)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

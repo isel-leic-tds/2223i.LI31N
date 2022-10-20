@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 object CmdFinish : CommandOop<Int> {
-    override fun action(board: Int?, args: List<String>) = null
+    override fun action(subject: Int?, args: List<String>) = null
     override fun show(board: Int) { }
     override val syntax: String get() = "FINISH"
 }

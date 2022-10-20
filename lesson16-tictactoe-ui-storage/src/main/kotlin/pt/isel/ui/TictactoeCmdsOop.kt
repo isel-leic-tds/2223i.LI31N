@@ -1,34 +1,40 @@
 package pt.isel.ui
 
+import pt.isel.Storage
 import pt.isel.ttt.*
 
-object CmdQuitOop : CommandOop<Board> {
-    override fun action(board: Board?, args: List<String>) = null
-    override fun show(board: Board) {}
+object CmdQuitOop : CommandOop<Game> {
+    override fun action(subject: Game?, args: List<String>) = null
+    override fun show(subject: Game) {}
     override val syntax: String get() = "quit"
 }
-object CmdStartOop : CommandOop<Board> {
-    override fun action(board: Board?, args: List<String>) = BoardRun()
-    override fun show(board: Board) = printBoard(board)
-    override val syntax: String get() = "start"
+
+class CmdStartOop(private val storage: Storage<String, Board>) : CommandOop<Game> {
+    override fun show(subject: Game) = printBoard(subject.board)
+    override val syntax: String get() = "start <name>"
+    override fun action(subject: Game?, args: List<String>) = startGame(storage, args)
 }
 
+class CmdRefreshOop(private val storage: Storage<String, Board>) : CommandOop<Game> {
+    override fun show(subject: Game) = printBoard(subject.board)
+    override val syntax: String get() = "refresh"
+    override fun action(subject: Game?, args: List<String>): Game? {
+        require(subject != null)
+        val b = storage.load(subject.name)
+        require(b != null)
+        return subject.copy(board = b)
+    }
+}
 
 /**
- * Represents a command with syntax e.g. play X 2 1
+ * Represents a command with syntax e.g. play 2 1
  */
-object CmdPlayOop : CommandOop<Board> {
-    override fun show(board: Board) = printBoard(board)
-    override val syntax: String get() = "play <X|O> <line> <col>"
-
-    override fun action(board: Board?, args: List<String>): Board? {
-        require(board != null) {"You should start a game to initialize a Board before start playing"}
-        require(args.size == 3) {"Missing arguments! Required player, line and column."}
-        val player = args[0].toPlayer() // May throw Error for invalid symbol diff from 0 or X
-        val line = args[1].toIntOrNull() ?: throw IllegalArgumentException("Invalid Integer value for line!")
-        val col = args[2].toIntOrNull() ?: throw IllegalArgumentException("Invalid Integer value for column!")
-        val pos = Position(line, col) // May throw Error for illegal line or col
-        return board.play(pos, player)
+class CmdPlayOop(private val storage: Storage<String, Board>) : CommandOop<Game> {
+    override fun show(subject: Game) = printBoard(subject.board)
+    override val syntax: String get() = "play <line> <col>"
+    override fun action(subject: Game?, args: List<String>): Game? {
+        require(subject != null) {"You should start a game to initialize a Board before start playing"}
+        return subject.play(storage, args)
     }
 }
 
@@ -44,7 +50,7 @@ fun printBoard(board: Board) {
             print("|")
     }
     if(board is BoardWin)
-        board.winner?.apply{ println("Player ${board.winner} wins.") }
+        board.winner.apply{ println("Player ${board.winner} wins.") }
 }
 /*
  O |   |

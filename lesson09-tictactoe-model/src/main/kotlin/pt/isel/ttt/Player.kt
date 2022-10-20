@@ -8,10 +8,9 @@ enum class Player(val symbol: Char) {
     fun turn() = if(this == CIRCLE) CROSS else CIRCLE
 }
 
-fun String.toPlayer(): Player {
-    require(this.length == 1) {"Illegal symbol with more than a single char."}
+fun Char.toPlayer(): Player {
     return Player
         .values()
-        .find { it.symbol == this.uppercase()[0] }
+        .find { it.symbol == this }
         ?: throw IllegalArgumentException("There is no player for symbol $this")
 }

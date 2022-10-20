@@ -3,13 +3,13 @@ package pt.isel.ui
 import pt.isel.ttt.*
 
 object CmdQuitOop : CommandOop<Board> {
-    override fun action(board: Board?, args: List<String>) = null
-    override fun show(board: Board) {}
+    override fun action(subject: Board?, args: List<String>) = null
+    override fun show(subject: Board) {}
     override val syntax: String get() = "quit"
 }
 object CmdStartOop : CommandOop<Board> {
-    override fun action(board: Board?, args: List<String>) = BoardRun()
-    override fun show(board: Board) = printBoard(board)
+    override fun action(subject: Board?, args: List<String>) = BoardRun()
+    override fun show(subject: Board) = printBoard(subject)
     override val syntax: String get() = "start"
 }
 
@@ -18,17 +18,17 @@ object CmdStartOop : CommandOop<Board> {
  * Represents a command with syntax e.g. play X 2 1
  */
 object CmdPlayOop : CommandOop<Board> {
-    override fun show(board: Board) = printBoard(board)
+    override fun show(subject: Board) = printBoard(subject)
     override val syntax: String get() = "play <X|O> <line> <col>"
 
-    override fun action(board: Board?, args: List<String>): Board? {
-        require(board != null) {"You should start a game to initialize a Board before start playing"}
+    override fun action(subject: Board?, args: List<String>): Board? {
+        require(subject != null) {"You should start a game to initialize a Board before start playing"}
         require(args.size == 3) {"Missing arguments! Required player, line and column."}
-        val player = args[0].toPlayer() // May throw Error for invalid symbol diff from 0 or X
+        val player = args[0][0].toPlayer() // May throw Error for invalid symbol diff from 0 or X
         val line = args[1].toIntOrNull() ?: throw IllegalArgumentException("Invalid Integer value for line!")
         val col = args[2].toIntOrNull() ?: throw IllegalArgumentException("Invalid Integer value for column!")
         val pos = Position(line, col) // May throw Error for illegal line or col
-        return board.play(pos, player)
+        return subject.play(pos, player)
     }
 }
 

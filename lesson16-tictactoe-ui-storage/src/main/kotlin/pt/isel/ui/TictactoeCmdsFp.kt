@@ -1,30 +1,26 @@
 package pt.isel.ui
 
+import pt.isel.Storage
 import pt.isel.ttt.*
 
-val cmdQuit = CommandFp<Board>(
+val cmdQuit = CommandFp<Game>(
     action = { _, _ -> null },
     show = { },
     syntax = "quit"
 )
 
 
-val cmdStart = CommandFp<Board>(
-    action = { _, _ -> BoardRun() },
-    show = { b -> printBoard(b) },
+fun cmdStart(storage: Storage<String, Board>) = CommandFp<Game>(
+    action = { _, args -> startGame(storage, args) },
+    show = { game -> printBoard(game.board) },
     syntax = "start"
 )
 
-val cmdPlay = CommandFp<Board>(
-    action = { board, args ->
-        require(board != null) {"You should start a game to initialize a Board before start playing"}
-        require(args.size == 3) {"Missing arguments! Required player, line and column."}
-        val player = args[0].toPlayer() // May throw Error for invalid symbol diff from 0 or X
-        val line = args[1].toIntOrNull() ?: throw IllegalArgumentException("Invalid Integer value for line!")
-        val col = args[2].toIntOrNull() ?: throw IllegalArgumentException("Invalid Integer value for column!")
-        val pos = Position(line, col) // May throw Error for illegal line or col
-        board.play(pos, player)
+fun cmdPlay(storage: Storage<String, Board>) = CommandFp<Game>(
+    action = { game, args ->
+        require(game != null) {"You should start a game to initialize a Board before start playing"}
+        game.play(storage, args)
     },
-    show = { b -> b?.let(::printBoard) },
+    show = { game -> game?.board.let(::printBoard) },
     syntax = "play <X|O> <line> <col>"
 )
