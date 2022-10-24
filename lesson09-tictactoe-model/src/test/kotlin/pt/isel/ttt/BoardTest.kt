@@ -5,13 +5,18 @@ import pt.isel.ttt.Player.CROSS
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 
 class BoardTest {
 
     @Test fun `Serialize and deserialize returns equivalent BoardRun object`() {
-        val b = BoardRun().play(Position(1, 2), CROSS) as BoardRun
-        val newBoardRun = b.serialize().deserializeToBoardRun()
+        val b = BoardRun()
+            .play(Position(0, 0), CROSS).play(Position(1, 0), CIRCLE)
+            .play(Position(0, 1), CROSS).play(Position(1, 1), CIRCLE)
+            .play(Position(0, 2), CROSS)
+        val newBoardRun = b.serialize().deserializeToBoard()
         assertEquals(b.moves, newBoardRun.moves)
+        assertIs<BoardWin>(newBoardRun)
     }
 
     @Test fun `The same player cannot play twice`() {

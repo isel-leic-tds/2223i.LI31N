@@ -8,6 +8,26 @@ sealed class Board(val moves: List<Move>) {
     fun get(pos: Position): Move? {
         return moves.find { it.pos == pos }
     }
+    /**
+     * Returns a String representation with one line per Move object.
+     */
+    fun serialize(): String {
+        val klassName = this::class.simpleName
+        val movesStr = moves.joinToString("\n") { it.serialize() }
+        return "$klassName\n$movesStr"
+    }
+}
+
+fun String.deserializeToBoard() : Board {
+    val words = this.split("\n")
+    val moves = words.drop(1).map { it.deserializeToMove() }
+    val lastPlayer = moves.last().player
+    return when(words[0]) {
+        BoardRun::class.simpleName -> BoardRun(moves, lastPlayer)
+        BoardDraw::class.simpleName -> BoardDraw(moves)
+        BoardWin::class.simpleName -> BoardWin(moves, lastPlayer)
+        else -> throw IllegalStateException("There is no board type for ${words[0]}")
+    }
 }
 
 class BoardDraw(moves: List<Move>) : Board(moves) {
@@ -18,20 +38,10 @@ class BoardWin(moves: List<Move>, val winner: Player) : Board(moves) {
     override fun play(pos: Position, p: Player) = throw IllegalStateException("Player $winner has won the game!")
 }
 
-fun String.deserializeToBoardRun() : BoardRun {
-    val moves = this.split("\n").map { it.deserializeToMove() }
-    return BoardRun(moves)
-}
-
 class BoardRun(
     moves: List<Move> = emptyList(),
     val player: Player = Player.CIRCLE
 ) : Board(moves) {
-    /**
-     * Returns a String representation with one line per Move object.
-     */
-    fun serialize() = moves.map { it.serialize() }.joinToString("\n")
-
     /**
      * If it is a valid move then it creates a new
      * Board with all previous moves and the new one.

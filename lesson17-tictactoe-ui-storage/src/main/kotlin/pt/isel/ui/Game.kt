@@ -2,30 +2,25 @@ package pt.isel.ui
 
 import pt.isel.Storage
 import pt.isel.ttt.*
+import pt.isel.ttt.Player.*
 
 data class Game(
     val name: String,
-    val storage: Storage<String, Game>,
     val board: Board = BoardRun(),
-    val player: Player = Player.CROSS
+    val player: Player = CROSS
 )
 
-class cmdGamePlay : CommandOop<Game> {
-    override fun action(game: Game?, args: List<String>): Game? {
-        require(game != null) {"You should start a game to initialize a Board before start playing"}
-        require(args.size == 3) {"Missing arguments! Required player, line and column."}
-        val player = args[0].toPlayer() // May throw Error for invalid symbol diff from 0 or X
-        val line = args[1].toIntOrNull() ?: throw IllegalArgumentException("Invalid Integer value for line!")
-        val col = args[2].toIntOrNull() ?: throw IllegalArgumentException("Invalid Integer value for column!")
-        val pos = Position(line, col) // May throw Error for illegal line or col
-        val board = game.board.play(pos, player) // May throw Exception if is not your turn
-        return game.copy(board = board)
-    }
+fun startGame(storage: Storage<String, Board>, name: String) : Game {
+    val board = storage.load(name)
+    if(board != null && board.moves.size <= 1) return Game(name, board, CIRCLE)
+    if(board == null) return Game(name, storage.new(name))
+    storage.delete(name)
+    return Game(name, storage.new(name))
+}
 
-    override fun show(board: Game) {
-        TODO("Not yet implemented")
-    }
-
-    override val syntax: String
-        get() = TODO("Not yet implemented")
+fun Game.play(storage: Storage<String, Board>, lin: Int, col: Int): Game? {
+    val pos = Position(lin, col) // May throw Error for illegal line or col
+    val newBoard = this.board.play(pos, player) // May throw Exception if is not your turn
+    // return Game(name, newBoard, player)
+    return this.copy(board = newBoard)
 }
