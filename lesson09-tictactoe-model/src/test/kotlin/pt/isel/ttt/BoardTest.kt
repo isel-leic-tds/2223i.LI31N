@@ -9,8 +9,8 @@ import kotlin.test.assertFailsWith
 class BoardTest {
 
     @Test fun `Serialize and deserialize returns equivalent BoardRun object`() {
-        val b = BoardRun().play(Position(1, 2), CROSS)
-        val newBoardRun = b.serialize().deserializeToBoard()
+        val b = BoardRun().play(Position(1, 2), CROSS) as BoardRun
+        val newBoardRun = b.serialize().deserializeToBoardRun()
         assertEquals(b.moves, newBoardRun.moves)
     }
 

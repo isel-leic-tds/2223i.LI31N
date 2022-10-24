@@ -1,6 +1,9 @@
 package pt.isel
 
-import pt.isel.ttt.*
+import pt.isel.ttt.BoardRun
+import pt.isel.ttt.Player
+import pt.isel.ttt.Position
+import pt.isel.ttt.deserializeToBoardRun
 import java.io.File
 import java.lang.IllegalArgumentException
 import kotlin.test.*
@@ -47,16 +50,16 @@ class StorageTest {
     }
     @Test fun `Save and load a complex entity Board - Move - Position`() {
 
-        val serializer = object : StringSerializer<Board> {
-            override fun write(obj: Board) = obj.serialize()
-            override fun parse(input: String) = input.deserializeToBoard()
+        val serializer = object : StringSerializer<BoardRun> {
+            override fun write(obj: BoardRun) = obj.serialize()
+            override fun parse(input: String) = input.deserializeToBoardRun()
         }
-        val fs = FileStorage<Int, Board>(folder, serializer) { _ -> BoardRun()}
-        val board = fs
+        val fs = FileStorage<Int, BoardRun>(folder, serializer) { _ -> BoardRun()}
+        val b1 = fs
             .new(dummyId)
-            .play(Position(1, 2), Player.CROSS)
-            .play(Position(2, 0),Player.CIRCLE)
-        fs.save(dummyId, board)
-        assertEquals(board.moves, fs.load(dummyId)?.moves)
+            .play(Position(1, 2), Player.CROSS) as BoardRun
+        val b2 = b1.play(Position(2, 0),Player.CIRCLE) as BoardRun
+        fs.save(dummyId, b2)
+        assertEquals(b2.moves, fs.load(dummyId)?.moves)
     }
 }
