@@ -21,6 +21,7 @@ fun startGame(storage: Storage<String, Board>, name: String) : Game {
 fun Game.play(storage: Storage<String, Board>, lin: Int, col: Int): Game? {
     val pos = Position(lin, col) // May throw Error for illegal line or col
     val newBoard = this.board.play(pos, player) // May throw Exception if is not your turn
+    storage.save(name, newBoard)
     // return Game(name, newBoard, player)
     return this.copy(board = newBoard)
 }

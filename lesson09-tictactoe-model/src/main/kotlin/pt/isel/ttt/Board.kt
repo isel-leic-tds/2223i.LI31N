@@ -1,5 +1,7 @@
 package pt.isel.ttt
 
+import pt.isel.ttt.Player.CIRCLE
+
 const val BOARD_SIZE = 3
 const val MAX_MOVES = BOARD_SIZE * BOARD_SIZE
 
@@ -20,8 +22,8 @@ sealed class Board(val moves: List<Move>) {
 
 fun String.deserializeToBoard() : Board {
     val words = this.split("\n")
-    val moves = words.drop(1).map { it.deserializeToMove() }
-    val lastPlayer = moves.last().player
+    val moves = words.drop(1).filter { it.isNotEmpty() }.map { it.deserializeToMove() }
+    val lastPlayer = if(moves.isEmpty()) CIRCLE else moves.last().player
     return when(words[0]) {
         BoardRun::class.simpleName -> BoardRun(moves, lastPlayer)
         BoardDraw::class.simpleName -> BoardDraw(moves)
@@ -40,7 +42,7 @@ class BoardWin(moves: List<Move>, val winner: Player) : Board(moves) {
 
 class BoardRun(
     moves: List<Move> = emptyList(),
-    val player: Player = Player.CIRCLE
+    val player: Player = CIRCLE
 ) : Board(moves) {
     /**
      * If it is a valid move then it creates a new
