@@ -46,7 +46,6 @@ class StorageTest {
         assertEquals("Rua Rosa", dummy.address)
     }
     @Test fun `Save and load a complex entity Board - Move - Position`() {
-
         val serializer = object : StringSerializer<Board> {
             override fun write(obj: Board) = obj.serialize()
             override fun parse(input: String) = input.deserializeToBoard()
