@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation(compose.desktop.currentOs)
+    implementation(project(":lesson09-tictactoe-model"))
 
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
