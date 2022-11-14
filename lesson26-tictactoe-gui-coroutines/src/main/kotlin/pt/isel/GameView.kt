@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,11 +18,33 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogState
 import pt.isel.ttt.*
+import java.net.URL
+import kotlin.concurrent.thread
 
+fun requestChuckNorris(onComplete: (String) -> Unit) = thread {
+    URL("https://app.requestly.io/delay/1000/https://api.chucknorris.io/jokes/random")
+        .readText()
+        .let {
+            """(?<=\"value\":\")[^\"]*""".toRegex().find(it)?.value
+        }
+        .also {
+            /*
+             * !!!!!! UI update out of the UI Thread
+             */
+            onComplete(it ?: "")
+        }
+}
 
 @Composable
 fun GameView(game: GameState) {
-    BoardView(game.board, game::play)
+    val chuckNorris = remember { mutableStateOf("") }
+    Column {
+        BoardView(game.board) {
+            game.play(it)
+            requestChuckNorris { chuckNorris.value = it }
+        }
+        Text(chuckNorris.value)
+    }
     DialogMessage(game.message, game::dismissMessage)
 }
 

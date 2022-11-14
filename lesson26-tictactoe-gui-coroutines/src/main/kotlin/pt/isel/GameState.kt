@@ -6,7 +6,7 @@ import pt.isel.ttt.Board
 import pt.isel.ttt.BoardRun
 import pt.isel.ttt.Position
 
-class GameState {
+class GameState(val watch: StopWatch) {
     val board get() = boardState.value
     val message get() = messageState.value
 
@@ -15,6 +15,8 @@ class GameState {
 
     fun newGame() {
         boardState.value = BoardRun()
+        watch.reset()
+        watch.start()
     }
 
     fun play(pos: Position) {
@@ -23,6 +25,7 @@ class GameState {
             board.play(pos, board.player.turn()).also(setBoard)
         } else { board }
         messageState.value = message(newBoard)
+        if(message != null) watch.pause()
     }
 
     fun dismissMessage() {
