@@ -20,12 +20,11 @@ fun main() = application {
     ) {
         MaterialTheme {
             val scope = rememberCoroutineScope()
-            val stopWatch = remember { StopWatch(scope) }
-            val gameState = remember { GameState(stopWatch) }
+            val gameState = remember { GameState(scope) }
 
             GameMenu(gameState)
             Column {
-                StopWatchView(stopWatch.formattedTime )
+                StopWatchView(gameState.watch.formattedTime )
                 GameView(gameState)
             }
         }
