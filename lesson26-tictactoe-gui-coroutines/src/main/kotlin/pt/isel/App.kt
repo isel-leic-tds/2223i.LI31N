@@ -30,86 +30,19 @@ fun main() = application {
         )
     ) {
         MaterialTheme {
-            val (board, setBoard) = remember { mutableStateOf<Board>(BoardRun()) }
-            GameMenu(board, setBoard)
-            GameView(board, setBoard)
+            val gameState = remember { GameState() }
+            GameMenu(gameState)
+            GameView(gameState)
         }
     }
 }
 
 @Composable
-fun FrameWindowScope.GameMenu(board: Board, updateBoard: (Board) -> Unit) {
+fun FrameWindowScope.GameMenu(gameState: GameState) {
     MenuBar {
         Menu("Game") {
-            Item("New", onClick = { updateBoard(BoardRun()) } )
+            Item("New", onClick = gameState::newGame)
             Item("Quit", onClick = { exitProcess(0) } )
         }
-    }
-}
-
-@Composable
-fun GameView(board: Board, updateBoard: (Board) -> Unit) {
-        val dialogMessage = remember { mutableStateOf("") }
-        val dialogVisible = remember { mutableStateOf(false) }
-        BoardView(board) { pos ->
-            if(board is BoardRun) {
-                val newBoard = board.play(pos, board.player.turn())
-                updateBoard(newBoard)
-            } else {
-                dialogVisible.value = true
-                dialogMessage.value = when(board) {
-                    is BoardDraw -> "Game finished with a draw!"
-                    is BoardWin -> "Player ${board.winner} wan the game!"
-                    else -> "Error unknown Game status!"
-                }
-            }
-        }
-        DialogMessage(dialogMessage.value, dialogVisible.value) {
-            dialogVisible.value = false
-        }
-}
-
-@Composable
-fun DialogMessage(msg: String, visible: Boolean, action: () -> Unit) {
-    if(visible) {
-         Dialog(
-            onCloseRequest = action,
-            title = "Message",
-            state = DialogState(height = Dp.Unspecified, width = 350.dp)
-        ) {
-            Text(msg)
-        }
-    }
-}
-
-@Composable
-fun BoardView(board: Board, action: (Position) -> Unit) {
-    Column {
-        repeat(BOARD_SIZE) { lin ->
-            Row {
-                repeat(BOARD_SIZE) { col ->
-                    val mov = board.moves.find { it.pos == Position(lin, col) }
-                    Cell(lin, col, mov?.player, action)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun Cell(lin: Int, col: Int, player: Player?, action: (Position) -> Unit ) {
-    val symbol = player?.symbol ?: ' '
-    val modifier = Modifier
-            .size(width = 100.dp, height = 100.dp)
-            .border(width = 2.dp, Color.Gray)
-            .let {
-                if(player == null) it.clickable { action(Position(lin, col)) }
-                else it
-            }
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Text(symbol.toString(), fontSize = 6.em)
     }
 }
