@@ -20,19 +20,10 @@ import pt.isel.ttt.*
 @Composable
 fun GameView(game: GameState) {
     Column {
-        BoardView(game.board) {
-            game.play(it)
-            game.requestChuckNorris()
-        }
+        BoardView(game.board, game::play)
         Text(game.chuckNorris)
     }
     DialogMessage(game.message, game::dismissMessage)
-}
-
-fun message(board: Board) = when(board) {
-    is BoardDraw -> "Game finished with a draw!"
-    is BoardWin -> "Player ${board.winner} won the game!"
-    is BoardRun -> null
 }
 
 @Composable
