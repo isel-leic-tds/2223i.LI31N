@@ -40,12 +40,12 @@ fun DialogMessage(msg: String?, action: () -> Unit) {
 }
 
 @Composable
-fun BoardView(board: Board, action: (Position) -> Unit) {
+fun BoardView(board: Board?, action: (Position) -> Unit) {
     Column {
         repeat(BOARD_SIZE) { lin ->
             Row {
                 repeat(BOARD_SIZE) { col ->
-                    val mov = board.moves.find { it.pos == Position(lin, col) }
+                    val mov = board?.moves?.find { it.pos == Position(lin, col) }
                     Cell(lin, col, mov?.player, action)
                 }
             }

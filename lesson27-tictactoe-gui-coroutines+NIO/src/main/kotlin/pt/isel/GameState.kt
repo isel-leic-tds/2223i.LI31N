@@ -7,42 +7,53 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import pt.isel.ttt.*
+import java.lang.Exception
 import java.net.URI
 import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpClient.Redirect
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.nio.file.Paths
-import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread
 
-class GameState(val scope: CoroutineScope) {
-    private val boardState = mutableStateOf<GameAsync?>(null)
+class GameState(val scope: CoroutineScope, val storage: StorageAsync<String, Board>) {
+    private val gameState = mutableStateOf<GameAsync?>(null)
     private val messageState = mutableStateOf<String?>(null)
     private val chuckNorrisState = mutableStateOf("")
 
-    val board get() = boardState.value
+    val board get() = gameState.value?.board
     val message get() = messageState.value
     val chuckNorris get() = chuckNorrisState.value
-    val watch = StopWatch(scope).also { it.start() }
+    val watch = StopWatch(scope)
 
-    fun newGame() {
-        boardState.value = BoardRun()
+    fun newGame(name: String) = scope.launch {
+        gameState.value = startGame(storage, name)
         watch.reset()
         watch.start()
     }
 
     fun play(pos: Position) {
-        // requestChuckNorrisNio().thenApply { chuckNorrisState.value = it ?: "" }
         scope.launch { chuckNorrisState.value = requestChuckNorris() }
-        val (board, setBoard) = boardState
-        val newBoard = if(board is BoardRun) {
-            board.play(pos, board.player.turn()).also(setBoard)
-        } else { board }
-        messageState.value = message(newBoard)
-        if(message != null) watch.pause()
+        val (game, setGame) = gameState
+        if(game == null) {
+            messageState.value = "You must start a new Game before playing!"
+            return
+        }
+        scope.launch {
+            try {
+                val newGame = if(game.board is BoardRun) {
+                    game.play(storage, pos).also(setGame)
+                } else { game }
+                messageState.value = message(newGame.board)
+                if(message != null) watch.pause()
+            } catch(ex: Exception) {
+                messageState.value = ex.message
+                val newBoard = storage.load(game.name)
+                if(newBoard != null && newBoard.moves != board?.moves)
+                    setGame(game.copy(board = newBoard))
+            }
+        }
     }
 
     fun dismissMessage() {

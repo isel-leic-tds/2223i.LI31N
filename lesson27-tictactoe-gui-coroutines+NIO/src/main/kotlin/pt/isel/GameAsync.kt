@@ -19,8 +19,7 @@ suspend fun startGame(storage: StorageAsync<String, Board>, name: String) : Game
     return GameAsync(name, storage.new(name))
 }
 
-suspend fun GameAsync.play(storage: StorageAsync<String, Board>, lin: Int, col: Int): GameAsync? {
-    val pos = Position(lin, col) // May throw Error for illegal line or col
+suspend fun GameAsync.play(storage: StorageAsync<String, Board>, pos: Position): GameAsync {
     val newBoard = this.board.play(pos, player) // May throw Exception if is not your turn
     storage.save(name, newBoard)
     // return Game(name, newBoard, player)

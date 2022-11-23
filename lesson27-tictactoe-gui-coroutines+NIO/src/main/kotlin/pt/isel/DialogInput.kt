@@ -24,9 +24,7 @@ import androidx.compose.ui.window.DialogState
  */
 @Composable
 fun DialogInput(onCancel: ()->Unit, onStart: (String)->Unit) = Dialog(
-    onCloseRequest = onCancel,
-    title = "Game name",
-    state = DialogState( height = Dp.Unspecified, width = 350.dp)
+    onCloseRequest = onCancel, title = "Game name", state = DialogState( height = Dp.Unspecified, width = 350.dp)
 ) {
     val (name, setName) = remember { mutableStateOf("abc") }
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
