@@ -5,6 +5,8 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pt.isel.ttt.*
 import java.lang.Exception
@@ -18,6 +20,7 @@ import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread
 
 class GameState(val scope: CoroutineScope, val storage: StorageAsync<String, Board>) {
+    private var refreshJob: Job? = null
     private val gameState = mutableStateOf<GameAsync?>(null)
     private val messageState = mutableStateOf<String?>(null)
     private val chuckNorrisState = mutableStateOf("")
@@ -27,10 +30,23 @@ class GameState(val scope: CoroutineScope, val storage: StorageAsync<String, Boa
     val chuckNorris get() = chuckNorrisState.value
     val watch = StopWatch(scope)
 
-    fun newGame(name: String) = scope.launch {
-        gameState.value = startGame(storage, name)
-        watch.reset()
-        watch.start()
+    fun newGame(name: String) {
+        scope.launch {
+            gameState.value = startGame(storage, name)
+            watch.reset()
+            watch.start()
+            refreshJob = scope.launch {
+                val (game, setGame) = gameState
+                if(game == null) return@launch
+                while(true) {
+                    val newBoard = storage.load(game.name)
+                    if(newBoard != null && newBoard.moves != game.board.moves) {
+                        setGame(game.copy(board = newBoard))
+                    }
+                    delay(500)
+                }
+            }
+        }
     }
 
     fun play(pos: Position) {
@@ -71,9 +87,19 @@ class GameState(val scope: CoroutineScope, val storage: StorageAsync<String, Boa
     }
 
     fun message(board: Board) = when(board) {
-        is BoardDraw -> "Game finished with a draw!"
-        is BoardWin -> "Player ${board.winner} won the game!"
-        is BoardRun -> null
+        is BoardDraw -> {
+            refreshJob?.cancel()
+            refreshJob = null
+            "Game finished with a draw!"
+        }
+        is BoardWin -> {
+            refreshJob?.cancel()
+            refreshJob = null
+            "Game finished with a draw!"
+        }
+        is BoardRun -> {
+            null
+        }
     }
 }
 
